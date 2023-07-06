@@ -1,4 +1,4 @@
-from Constants.elementary import * 
+from constants.elementary import *
 import math
 global width
 global height
@@ -47,8 +47,13 @@ class Particle():
 
     def check_pos(self):
         if not (-width/2 < self.x < width/2) or not (-height/2 < self.y < height/2):
-            pass
+            self.x,self.y = get_genXY()
+            self.Vx,self.Vy = 0,0
+
+
 
 class Electron(Particle):
     def __init__(self,x,y):
         super().__init__(-1,ELECTRON_MASS,x,y,ELECTRON_RADIUS)
+
+from __init__ import get_genXY
