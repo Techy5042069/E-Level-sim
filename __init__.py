@@ -24,6 +24,8 @@ def draw():
    background(255)
    translate(WIDTH/2,HEIGHT/2)
    t1 = time.time()
+   for par in particles:
+      par.resetForces()
    for idx in range(E_AMT):
       particles[idx].compute_force(particles,idx)
    for idx in range(E_AMT):

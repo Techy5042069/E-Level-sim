@@ -18,24 +18,24 @@ class Particle():
         self.Vy = 0
 
     def compute_force(self, particles, parIdx):
-        self.Fx = 0
-        self.Fy = 0
-    
-        for idx,par in enumerate(particles):
-            if idx == parIdx: continue
-
+        for idx in range(parIdx + 1,len(particles)):
+            par = particles[idx]
             distx = par.x - self.x
             disty = par.y - self.y
-            angle = math.atan2(disty,distx)
-            dist = distx ** 2 + disty ** 2
+            # angle = math.atan2(disty,distx)
+            dist = (distx ** 2 + disty ** 2)**0.5
             attractivity = 1 #attract
             if self.charge == par.charge:
                 attractivity = -1 #repulsion
             elif self.charge == 0 or par.charge == 0:
                 attractivity = 0
-            force = COLUMB_CONSTANT * CHARGE**2 * attractivity / dist
-            self.Fx += force * math.cos(angle)
-            self.Fy += force * math.sin(angle)
+            force_dist = FORCE_CONSTANT * attractivity / dist # F/d
+            Fx = force_dist / distx
+            Fy = force_dist / disty
+            self.Fx += Fx
+            self.Fy += Fy
+            par.Fx += Fx * attractivity
+            par.Fy += Fy * attractivity
         
         self.Ax = self.Fx/ELECTRON_MASS
         self.Ay = self.Fy/ELECTRON_MASS
@@ -49,7 +49,8 @@ class Particle():
         if not (-width/2 < self.x < width/2) or not (-height/2 < self.y < height/2):
             self.x,self.y = get_genXY()
             self.Vx,self.Vy = 0,0
-
+    def resetForces(self):
+        self.Fx,self.Fy = 0,0
 
 
 class Electron(Particle):
