@@ -1,5 +1,4 @@
 from constants.elementary import *
-import math
 global width
 global height
 
@@ -22,27 +21,30 @@ class Particle():
             par = particles[idx]
             distx = par.x - self.x
             disty = par.y - self.y
-            # angle = math.atan2(disty,distx)
-            dist = (distx ** 2 + disty ** 2)**0.5
+            dist = (distx ** 2 + disty ** 2) ** 0.5
+
             attractivity = 1 #attract
             if self.charge == par.charge:
                 attractivity = -1 #repulsion
             elif self.charge == 0 or par.charge == 0:
                 attractivity = 0
-            force_dist = FORCE_CONSTANT * attractivity / dist # F/d
-            Fx = force_dist / distx
-            Fy = force_dist / disty
+
+            force_dist = FORCE_CONSTANT * attractivity / (dist ** 2) # F
+            Fx = force_dist * distx/(dist)
+            Fy = force_dist * disty/(dist)
             self.Fx += Fx
             self.Fy += Fy
-            par.Fx += Fx * attractivity
-            par.Fy += Fy * attractivity
+            par.Fx += -Fx
+            par.Fy += -Fy
         
-        self.Ax = self.Fx/ELECTRON_MASS
-        self.Ay = self.Fy/ELECTRON_MASS
+        self.Ax = self.Fx/self.mass
+        self.Ay = self.Fy/self.mass
         self.Vx += self.Ax
         self.Vy += self.Ay
-        self.x += self.Vx
-        self.y += self.Vy
+        self.x += (self.Vx * PIXEL_FACTOR)
+        self.y += (self.Vy * PIXEL_FACTOR)
+        print("vel", self.Vx , self.Vy)
+        print("pos",self.x , self.y)
         self.check_pos()
 
     def check_pos(self):
@@ -52,9 +54,16 @@ class Particle():
     def resetForces(self):
         self.Fx,self.Fy = 0,0
 
+class Proton(Particle):
+    def __init__(self,x,y):
+        super().__init__(1,PROTON_MASS,x,y,PROTON_RADIUS)
+
 
 class Electron(Particle):
     def __init__(self,x,y):
-        super().__init__(-1,ELECTRON_MASS,x,y,ELECTRON_RADIUS)
+        super().__init__(-1,ELECTRON_MASS,x,y,PROTON_RADIUS/ELECTRON_PROTON_FACTOR)
+        # self.Vy  =  abs(self.x)/self.x* (FORCE_CONSTANT/(self.mass * 100)) ** 0.5 
+
+
 
 from __init__ import get_genXY
