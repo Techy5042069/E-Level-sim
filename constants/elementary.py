@@ -6,4 +6,6 @@ ELECTRON_PROTON_FACTOR = 1836 #assuming linear mass-volume relation
 CHARGE =  1.602176634e-19
 COLUMB_CONSTANT =9e9 #epsilon_knot / 4pi
 PIXEL_FACTOR = 1 # 1 PX = 1 FM
-FORCE_CONSTANT = COLUMB_CONSTANT * CHARGE**2 # epision_knot / 4 pi * q1 * q2
+CFORCE_CONSTANT = COLUMB_CONSTANT * CHARGE**2 # epision_knot / 4 pi * q1 * q2
+GRAVITATIONAL_CONSTANT = 6.6743e-11
+# NFORCE_CONSTANT_E_P = 0

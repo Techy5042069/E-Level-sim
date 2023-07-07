@@ -15,8 +15,10 @@ class Particle():
         self.Ay = 0
         self.Vx = 0
         self.Vy = 0
+        # self.PrevE = 0
+        # self.PE = 0
 
-    def compute_force(self, particles, parIdx):
+    def compute_force(self, particles: list, parIdx):
         for idx in range(parIdx + 1,len(particles)):
             par = particles[idx]
             distx = par.x - self.x
@@ -28,14 +30,15 @@ class Particle():
                 attractivity = -1 #repulsion
             elif self.charge == 0 or par.charge == 0:
                 attractivity = 0
-
-            force_dist = FORCE_CONSTANT * attractivity / (dist ** 2) # F
-            Fx = force_dist * distx/(dist)
-            Fy = force_dist * disty/(dist)
+            newton_force_constant = GRAVITATIONAL_CONSTANT * self.mass * par.mass
+            force_dist = (CFORCE_CONSTANT * attractivity  + newton_force_constant) / dist
+            Fx = force_dist * distx/(dist ** 2)
+            Fy = force_dist * disty/(dist ** 2)
             self.Fx += Fx
             self.Fy += Fy
             par.Fx += -Fx
             par.Fy += -Fy
+            # self.PE += force_dist
         
         self.Ax = self.Fx/self.mass
         self.Ay = self.Fy/self.mass
@@ -43,16 +46,19 @@ class Particle():
         self.Vy += self.Ay
         self.x += (self.Vx * PIXEL_FACTOR)
         self.y += (self.Vy * PIXEL_FACTOR)
-        print("vel", self.Vx , self.Vy)
-        print("pos",self.x , self.y)
-        self.check_pos()
+        # tempV = self.Vx ** 2 + self.Vy ** 2
+        # currE = self.mass * tempV - 2 * self.PE
+        # diff = currE - self.PrevE
+        # print("E_TRACK: ",self.charge, diff)
+        # self.PrevE = currE
+        # self.check_pos()
 
     def check_pos(self):
         if not (-width/2 < self.x < width/2) or not (-height/2 < self.y < height/2):
             self.x,self.y = get_genXY()
             self.Vx,self.Vy = 0,0
     def resetForces(self):
-        self.Fx,self.Fy = 0,0
+        self.Fx,self.Fy,self.PE = 0,0,0
 
 class Proton(Particle):
     def __init__(self,x,y):

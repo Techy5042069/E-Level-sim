@@ -28,4 +28,11 @@
     The resultant of the forces is going to be the vector sum of `p * (N-1)` vectors where p is the type of forces.
 
     1 px = 1 m
+
+    there are various models that describe particles and their nature:
+        1. Bohr's model
+        2. Bohr's model combined with the wave nature of electron
+        3. Eliptical orbit nature of Electron
+        4. Orbital theory
+        5. Super position of Energy theory
     
