@@ -30,15 +30,15 @@ class Particle():
                 attractivity = -1 #repulsion
             elif self.charge == 0 or par.charge == 0:
                 attractivity = 0
+
             newton_force_constant = GRAVITATIONAL_CONSTANT * self.mass * par.mass
-            force_dist = (CFORCE_CONSTANT * attractivity  + newton_force_constant) / dist
-            Fx = force_dist * distx/(dist ** 2)
-            Fy = force_dist * disty/(dist ** 2)
+            force_dist = (CFORCE_CONSTANT * attractivity  + newton_force_constant) / (dist ** 3)
+            Fx = force_dist * distx
+            Fy = force_dist * disty
             self.Fx += Fx
             self.Fy += Fy
             par.Fx += -Fx
             par.Fy += -Fy
-            # self.PE += force_dist
         
         self.Ax = self.Fx/self.mass
         self.Ay = self.Fy/self.mass
