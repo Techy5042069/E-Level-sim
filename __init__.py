@@ -2,15 +2,14 @@ from p5 import *
 from constants.elementary import * 
 # from computations.Particles import *
 import numpy as np
-import timeit
-from pprint import pprint
+from timeit import timeit
+
 WIDTH,HEIGHT = 800,800
-E_AMT = 200
-P_AMT = 100
+E_AMT = 500
+P_AMT = 500
 cE_AMT = E_AMT
 cP_AMT = P_AMT
 T_AMT = E_AMT + P_AMT
-
 
 def get_genXYZ() -> list[int]:
    x = randomUniform(-WIDTH/2,WIDTH/2)
@@ -37,10 +36,6 @@ def get_par_values():
 particles = np.array([
    [*get_genXYZ(),*get_par_values(),0,0,0,0,0,0,0,0] for i in range(T_AMT)
 ],dtype=float)
-
-# particles = np.array([
-#    [*get_genXYZ(),*get_par_values(),0,0,0,0,0,0,0,0],[*get_genXYZ(),*get_par_values(),0,0,0,0,0,0,0,0]
-# ],dtype=float)
 print(particles)
 frameDat = np.array([
    [0,0,0,0,0,0,0,0,0] for i in range(T_AMT)
@@ -56,31 +51,25 @@ frameDat = np.array([
 
 
 def calc_dist(pos):
-   frameDat[:,0:3]=particles[:,0:3] - pos
+   frameDat[:,0:3] = particles[:,0:3] - pos
    frameDat[:,4] = np.linalg.norm(frameDat[:,0:3],2,1)
    #compute L2 norm
+
 def det_attr(charge):
-   frameDat[:,3] = [-1 if c == charge else 1 if c != charge else 0 for c in particles[:,3]]
+   # frameDat[:,3] = np.array([-1 if c == charge else 1 if c != charge else 0 for c in particles[:,3]])
+   frameDat[:,3] = (particles[:,3] * charge) * -1
+
 def calc_force(par,idx):
    N_force = GRAVITATIONAL_CONSTANT * par[4] * particles[idx:,4]
+   # N_force = 0
    frameDat[idx:,5] += (CFORCE_CONSTANT * frameDat[idx:,3] + N_force) / (frameDat[idx:,4] ** 3)
 
 def get_dynamics(par,idx):
-   Fx = (frameDat[:,0] * frameDat[:,5])
-   Fy = (frameDat[:,1] * frameDat[:,5])
-   Fz = (frameDat[:,2] * frameDat[:,5])
-   fXYZ = np.array([Fx,Fy,Fz]) 
+   fXYZ = np.array([(frameDat[:,0] * frameDat[:,5]),(frameDat[:,1] * frameDat[:,5]),(frameDat[:,2] * frameDat[:,5])]) 
    dV = (np.sum(fXYZ,1) - par[9:12])/par[4]
    if idx < T_AMT:
       particles[idx,9:12] = fXYZ.transpose()[1] 
-
    return dV
-
-def get_parXY(par):
-   return par[0],par[1]
-
-def get_par_radius(par):
-   return 25 if par[3] == 1 else 5
 
 def setup():
    size(WIDTH, HEIGHT)
@@ -88,11 +77,14 @@ def setup():
    fill(0)
    background(255)
 
+frames = 0
 def draw():
-   translate(WIDTH/2,HEIGHT/2)
-   if mouse_is_pressed:
-      background(255)
    t1 = time.time()
+   global frames
+   frames += 1
+   # translate(WIDTH/2,HEIGHT/2)
+   background(255)
+   # if mouse_is_pressed:
    idx = 0
    for par in particles:
       frameDat[:,5] = 0
@@ -108,12 +100,20 @@ def draw():
    # print(*particles[:,:],sep='\n\n')
    # print('***************************************************************\n')
    for par in particles:
+      # disp_par(par)
       col = "red" if par[3] == 1 else "blue"
       r = 25 if par[3] == 1 else 5
       fill(col)
-      circle(get_parXY(par),r)
+      circle(par[0:2],r)
    print(time.time() - t1)
 
+
 if __name__ == '__main__':
+   # deltaT = timeit(lambda: run(renderer="skia"),number=1)
    run(renderer="skia")
    # run()
+# deltaT = time.time() - t1
+print("frames: ", frames)
+# print("Time: ", deltaT )
+# print("FPS: ", frames/deltaT)
+
