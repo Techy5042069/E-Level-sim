@@ -5,23 +5,22 @@ import numpy as np
 from timeit import timeit
 
 WIDTH,HEIGHT = 800,800
-E_AMT = 500
-P_AMT = 500
+E_AMT = 2
+P_AMT = 2
 cE_AMT = E_AMT
 cP_AMT = P_AMT
 T_AMT = E_AMT + P_AMT
-
+Tracker = 126 #track N-1th particle , make sure to enable bg refresher
 def get_genXYZ() -> list[int]:
-   x = randomUniform(-WIDTH/2,WIDTH/2)
-   y = randomUniform(-HEIGHT/2,HEIGHT/2)
-   z = randomUniform(-100,100)
+   x = randomUniform(WIDTH/2,-WIDTH/2)
+   y = randomUniform(HEIGHT/2,-HEIGHT/2)
+   z = randomUniform(100,-100)
    return x,y,z
 
 def get_getCharge():
    return [1]
 
 def get_par_values():
-   # c = np.random.choice([-1,1],size=1)[0]
    global cE_AMT,cP_AMT
    if cE_AMT > 0:
       cE_AMT -= 1
@@ -43,9 +42,9 @@ frameDat = np.array([
 
 
 #[[x,y,z],[c,m,r],[Vx,Vy,Vz],[xFx,xFy,xFz]]
-
+#every particle Data
 # xF => precalculated force from previous calculation to reduce time complexity from O(N^2) to O(N log N)
-
+#every particle data against one, refreshed N times for one frame, N = no. of particles
 # [[distx,disty,distz],attr,dist,F/d^3,[Fx,Fy,Fz]]
 
 
@@ -56,12 +55,10 @@ def calc_dist(pos):
    #compute L2 norm
 
 def det_attr(charge):
-   # frameDat[:,3] = np.array([-1 if c == charge else 1 if c != charge else 0 for c in particles[:,3]])
    frameDat[:,3] = (particles[:,3] * charge) * -1
 
 def calc_force(par,idx):
    N_force = GRAVITATIONAL_CONSTANT * par[4] * particles[idx:,4]
-   # N_force = 0
    frameDat[idx:,5] += (CFORCE_CONSTANT * frameDat[idx:,3] + N_force) / (frameDat[idx:,4] ** 3)
 
 def get_dynamics(par,idx):
@@ -82,7 +79,8 @@ def draw():
    t1 = time.time()
    global frames
    frames += 1
-   # translate(WIDTH/2,HEIGHT/2)
+   translate(WIDTH/2 , HEIGHT/2) #no clue why this works
+   # translate(*(-particles[Tracker,0:2] + [WIDTH/2 , HEIGHT/2])) #no clue why this works
    background(255)
    # if mouse_is_pressed:
    idx = 0
@@ -99,13 +97,15 @@ def draw():
    # print('***************************************************************')
    # print(*particles[:,:],sep='\n\n')
    # print('***************************************************************\n')
+   idx = 0
    for par in particles:
       # disp_par(par)
-      col = "red" if par[3] == 1 else "blue"
+      col = "green" if idx == Tracker else "red" if par[3] == 1 else "blue"
       r = 25 if par[3] == 1 else 5
       fill(col)
       circle(par[0:2],r)
-   print(time.time() - t1)
+      idx +=1
+   # print(time.time() - t1)
 
 
 if __name__ == '__main__':
