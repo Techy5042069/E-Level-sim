@@ -4,15 +4,15 @@ from computations.Particles import *
 import numpy as np
 
 WIDTH,HEIGHT = 800,800
-E_AMT = 1
-P_AMT = 4
+E_AMT = 250
+P_AMT = 250
 def get_genXY():
    x = randomUniform(-WIDTH/2,WIDTH/2)
    y = randomUniform(-HEIGHT/2,HEIGHT/2)
    return x,y
 
-# particles = np.array([Electron(*get_genXY()) for i in range(E_AMT)] + [Proton(*get_genXY()) for i in range(P_AMT)])
-particles = np.array([Electron(125,300), Electron(-100,-150),Proton(100,100)])
+particles = np.array([Electron(*get_genXY()) for i in range(E_AMT)] + [Proton(*get_genXY()) for i in range(P_AMT)])
+# particles = np.array([Electron(125,300), Electron(-100,-150),Proton(100,100)])
 T_AMT = particles.size
 # particles = [Electron(*get_genXY()) for i in range(E_AMT)] + [Proton(*get_genXY()) for i in range(P_AMT)]
 # print(particles.size)
@@ -25,10 +25,10 @@ def setup():
 
 
 def draw():
+   t1 = time.time()
    translate(WIDTH/2,HEIGHT/2)
    if mouse_is_pressed:
       background(255)
-   t1 = time.time()
    for par in particles:
       par.resetForces()
    for idx in range(T_AMT):
