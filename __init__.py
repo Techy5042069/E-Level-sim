@@ -24,7 +24,6 @@ mass_radius_map = {
    -1 : [ELECTRON_MASS,ELECTRON_PROTON_FACTOR],
    0 : [NEUTRON_MASS,NEUTRON_RADIUS],
    1 : [PROTON_MASS,PROTON_RADIUS],
-   # [Tracker] : "green"
 }
 
 
@@ -45,14 +44,14 @@ def get_par_values():
    return c,*arr
 
 particles = np.array([
-   [*get_genXYZ(),*get_par_values(),0,0,0,0,0,0,0,0] for i in range(T_AMT)
+   [*get_genXYZ(),*get_par_values(),0,0,0,0,0,0] for i in range(T_AMT)
 ],dtype=float)
 print(particles)
 frameDat = np.array([
    [0,0,0,0,0,0,0,0,0] for i in range(T_AMT)
 ],dtype=float)
 
-#[[x,y,z],[c,m,r],[Vx,Vy,Vz],[xFx,xFy,xFz],[col,radius]]
+#[[x,y,z],[c,m,r],[Vx,Vy,Vz],[xFx,xFy,xFz]]
 #every particle Data
 # xF => precalculated force from previous calculation to reduce time complexity from O(N^2) to O(N log N)
 #every particle data against one, refreshed N times for one frame, N = no. of particles
