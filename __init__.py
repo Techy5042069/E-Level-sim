@@ -26,7 +26,7 @@ def calc_force(par, next_id):
 
 def get_dynamics(par, idx):
     fXYZ = frameDat[:, 0:3] * frameDat[:, 5][:, np.newaxis]
-    if next_id := idx + 1 < T_AMT:
+    if next_id := idx + 1 < len(particles):
         particles[next_id:, 9:12] += fXYZ[next_id:, :]
     return (np.sum(fXYZ, 0) - particles[idx, 9:12]) / par[4]  # dV -> a
 
@@ -52,8 +52,7 @@ while 1:
 
     for par in particles:
         col, r = color_radius_map[par[3]]
-        if idx == TRACKER:
-            col = "green"
+        if idx == TRACKER: col = "green"
         pygame.draw.circle(
             screen,
             col,
