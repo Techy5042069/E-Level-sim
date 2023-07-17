@@ -1,18 +1,23 @@
 WIDTH,HEIGHT,THICKNESS = 1440,800,300
-
-UNIFORM_SPREAD = 0
-
-
-E_AMT = 0
-P_AMT = 100
-N_AMT = 10
-
-PAR_AMT_PER_DIM = 10 # N number of particle per dimension, total par = N^k
-K = 3 #max 3 min 1
-SEP = 50 #px
+E_AMT = 1000
+P_AMT = 0
+N_AMT = 0
 
 
-TRACKING = 0
-DEFAULT_TRACKING_OFFSET = [0,0]
-# DEFAULT_TRACKING_OFFSET = [WIDTH/2,HEIGHT/2]
+UNIFORM_SPREAD = 1 #1 if the initial state is going to be a regualr sphere/circle/square
+SPREAD_RADIUS = 400  #for sphere/circle
+SHAPE = 1 # 0 for sq, 1 for circle
+UNIFROM_PAR_AMT = 10 # N number of particle per dimension, total par = N^k
+K = 2 #dimension, k=2 for 2nd dim, 3 max, 2min
+SEP = 50 #px, for square
+
+EXTRA_SQUARE_OFFSET = UNIFROM_PAR_AMT/2 * SEP
+DEFAULT_TRACKING_OFFSET = [WIDTH/2 ,HEIGHT/2]
+# DEFAULT_TRACKING_OFFSET = [WIDTH/2 - EXTRA_SQUARE_OFFSET,HEIGHT/2 -EXTRA_SQUARE_OFFSET]
+
+TRACKING = 0 #if you want to track nth particle
 TRACKER = 126 #track N-1th particle , make sure to enable bg refresher
+
+SAME_CHARGE_REPEL = -1 #1 for attraction, -1 for repulsion
+TOTAL_UNUNIFORM = (E_AMT + P_AMT + N_AMT)
+T_AMT = UNIFROM_PAR_AMT if UNIFORM_SPREAD else TOTAL_UNUNIFORM

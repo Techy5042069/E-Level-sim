@@ -1,69 +1,10 @@
-import numpy as np
 import pygame
-from constants.elementary import *
-from modes import *
-from time import time
-import itertools
-
-cE_AMT = E_AMT
-cP_AMT = P_AMT
-cN_AMT = N_AMT
-T_AMT = E_AMT + P_AMT + N_AMT
+from time import time,sleep
+from setup import *
 
 pygame.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 clock = pygame.time.Clock()
-
-
-def get_genXYZ():
-    x = np.random.uniform(0, WIDTH)
-    y = np.random.uniform(0, HEIGHT)
-    z = np.random.uniform(0, THICKNESS)
-    return x, y, z
-
-
-mass_radius_map = {
-    -1: [ELECTRON_MASS, ELECTRON_RADIUS],
-    0: [NEUTRON_MASS, NEUTRON_RADIUS],
-    1: [PROTON_MASS, PROTON_RADIUS],
-}
-
-
-def get_par_values():
-    global cE_AMT, cP_AMT, cN_AMT
-    if cE_AMT > 0:
-        cE_AMT -= 1
-        c = -1
-    elif cP_AMT > 0:
-        cP_AMT -= 1
-        c = 1
-    else:
-        cN_AMT -= 1
-        c = 0
-    arr = mass_radius_map[c]
-    return c, *arr
-
-if UNIFORM_SPREAD:
-    particles = np.array(
-        [[*(c * SEP for c in coords), *get_par_values(), 0, 0, 0, 0, 0, 0] for coords in itertools.product(range(PAR_AMT_PER_DIM),repeat=K )],
-    )
-else:
-    particles = np.array(
-        [[*get_genXYZ(), *get_par_values(), 0, 0, 0, 0, 0, 0] for i in range(T_AMT)],
-        dtype=float,
-    )
-
-
-frameDat = np.array([[0, 0, 0, 0, 0, 0] for i in range(T_AMT)], dtype=float)
-
-# [[x,y,z],[c,m,r],[Vx,Vy,Vz],[xFx,xFy,xFz]]
-# every particle Data
-# xF => precalculated force from previous calculation to reduce time complexity from O(N^2) to O(N log N)
-# every particle data against one, refreshed N times for one frame, N = no. of particles
-# [[distx,disty,distz],attr,dist,F/d^3,[Fx,Fy,Fz]]
-
-# display color and radius vals
-color_radius_map = {-1: ("blue", 2), 0.0: ("yellow", 8), 1: ("red", 8)}
 
 
 def calc_dist(pos):
@@ -73,7 +14,7 @@ def calc_dist(pos):
 
 
 def det_attr(charge):
-    frameDat[:, 3] = (particles[:, 3] * charge) * -1
+    frameDat[:, 3] = (particles[:, 3] * charge) * SAME_CHARGE_REPEL 
 
 
 def calc_force(par, next_id):
@@ -110,8 +51,6 @@ while 1:
     idx = 0
 
     for par in particles:
-        # if par[3] != -1:
-            # continue  # skip rendering if the paraticle isn't electron
         col, r = color_radius_map[par[3]]
         if idx == TRACKER:
             col = "green"
@@ -126,8 +65,6 @@ while 1:
             r,
         )
         idx += 1
-
     pygame.display.flip()
     clock.tick(60)  # Limit the frame rate to 60 FPS
-
     print(time() - t1)
